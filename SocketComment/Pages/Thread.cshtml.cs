@@ -9,7 +9,7 @@ namespace SocketComment.Pages
     public class ThreadModel : PageModel
     {
         [BindProperty]
-        public Comment Comment { get; set; }
+        public Thread Thread { get; set; }
 
         public async Task<IActionResult> OnGet(string id)
         {
@@ -17,10 +17,24 @@ namespace SocketComment.Pages
             {
                 return NotFound();
             }
-            
+
             using (var store = new MyCouchStore("http://localhost:5984", "comments"))
             {
-                Comment = await store.GetByIdAsync<Comment>(id);
+                var rootComment = await store.GetByIdAsync<Comment>(id);
+
+                if (rootComment != null)
+                {
+                    Thread = new Thread()
+                    {
+                        Root = rootComment
+                    };
+                }
+
+            }
+
+            if (Thread == null)
+            {
+                return NotFound();
             }
 
             return Page();

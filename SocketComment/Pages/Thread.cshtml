@@ -7,9 +7,9 @@
 
 <h2>Thread</h2>
 
-@if (Model.Comment?.Parent != null)
+@if (Model.Thread.Root.Parent != null)
 {
-    <p>Parent comment: <a asp-page="./Edit" asp-route-id="@Model.Comment.Parent">@Model.Comment.Parent</a></p>
+    <p>Parent comment: <a asp-page="./Edit" asp-route-id="@Model.Thread.Root.Parent">@Model.Thread.Root.Parent</a></p>
 }
 
-@Html.DisplayFor(model => model.Comment.Message)
+@Html.DisplayFor(model => Model.Thread.Root.Message)
