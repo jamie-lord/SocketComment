@@ -1,0 +1,16 @@
+﻿@page
+@model SocketComment.Pages.CreateCommentModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "CreateComment";
+}
+
+<h2>Create new comment</h2>
+
+<div asp-validation-summary="All"></div>
+<form method="POST">
+    <div>Author: <input asp-for="Comment.Author" /></div>
+    <div>Message: <input asp-for="Comment.Message" /></div>
+    <div>Parent: <input asp-for="Comment.Parent" /></div>
+    <input type="submit" />
+</form>

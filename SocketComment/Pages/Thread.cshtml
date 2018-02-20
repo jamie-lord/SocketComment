@@ -1,0 +1,15 @@
+﻿@page "{id}"
+@model SocketComment.Pages.ThreadModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Thread";
+}
+
+<h2>Thread</h2>
+
+@if (Model.Comment?.Parent != null)
+{
+    <p>Parent comment: <a asp-page="./Edit" asp-route-id="@Model.Comment.Parent">@Model.Comment.Parent</a></p>
+}
+
+@Html.DisplayFor(model => model.Comment.Message)
