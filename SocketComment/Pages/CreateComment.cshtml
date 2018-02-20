@@ -8,9 +8,23 @@
 <h2>Create new comment</h2>
 
 <div asp-validation-summary="All"></div>
-<form method="POST">
-    <div>Author: <input asp-for="Comment.Author" /></div>
-    <div>Message: <input asp-for="Comment.Message" /></div>
-    <div>Parent: <input asp-for="Comment.Parent" /></div>
-    <input type="submit" />
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Comment.Author" class="control-label"></label>
+        <input asp-for="Comment.Author" class="form-control" />
+        <span asp-validation-for="Comment.Author" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Comment.Message" class="control-label"></label>
+        <input asp-for="Comment.Message" class="form-control" />
+        <span asp-validation-for="Comment.Message" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Comment.Parent" class="control-label"></label>
+        <input asp-for="Comment.Parent" class="form-control" />
+        <span asp-validation-for="Comment.Parent" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-default" />
+    </div>
 </form>
