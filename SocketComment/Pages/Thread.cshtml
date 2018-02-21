@@ -12,12 +12,29 @@
     <p>Parent comment: <a asp-page="./Thread" asp-route-id="@Model.Thread.Root.Parent">@Model.Thread.Root.Parent</a></p>
 }
 
-@Html.DisplayFor(model => Model.Thread.Root.Message)
-
-@if (Model.Thread.Children != null && Model.Thread.Children.Any())
-{
-    foreach (var child in Model.Thread.Children)
-    {
-        <p>@child.Message</p>
-    }
-}
+<div class="container">
+    <div class="row">
+        <div class="comments col-md-9" id="comments">
+            <div class="comment mb-2 row">
+                <div class="comment col-12">
+                    @{ Html.RenderPartial("Partials/SingleComment", Model.Thread.Root); }
+                </div>
+                @if (Model.Thread.Children != null && Model.Thread.Children.Any())
+                {
+                    @foreach (var child in Model.Thread.Children)
+                    {
+                        <div class="comment-reply col-md-11 offset-md-1 col-sm-10 offset-sm-2">
+                            @{ Html.RenderPartial("Partials/SingleComment", child); }
+                        </div>
+                    }
+                }
+            </div>
+            <!-- /comment -->
+            <div class="row pt-2">
+                <div class="col-12">
+                    <a href="" class="btn btn-sm btn-primary">Comment</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
