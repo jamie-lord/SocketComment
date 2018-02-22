@@ -42,13 +42,24 @@ namespace SocketComment.Pages
             return Page();
         }
 
-        private async Task<List<Thread>> GetChildComments(MyCouchStore store, Comment rootComment)
+        private const int MAX_DEPTH = 4;
+        private const int MAX_COMMENTS = 100;
+
+        private async Task<List<Thread>> GetChildComments(MyCouchStore store, Comment rootComment, int depth = 0, int count = 0)
         {
             //function(doc) {
             //    if (doc.$doctype == 'comment') {
             //        emit(doc.parent, doc);
             //    }
             //}
+
+            if (depth > MAX_DEPTH || count > MAX_COMMENTS)
+            {
+                return null;
+            }
+
+            depth++;
+            count++;
 
             var query = new Query("comments", "children")
             {
@@ -65,7 +76,7 @@ namespace SocketComment.Pages
                     var thread = new Thread()
                     {
                         Root = child.Value,
-                        Children = await GetChildComments(store, child.Value)
+                        Children = await GetChildComments(store, child.Value, depth, count)
                     };
                     result.Add(thread);
                 }
