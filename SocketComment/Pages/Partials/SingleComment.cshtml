@@ -1,4 +1,5 @@
-﻿@model SocketComment.Models.Comment
+﻿@using System.Text.RegularExpressions
+@model SocketComment.Models.Comment
 
 <div class="row">
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
@@ -8,8 +9,8 @@
         <h6 class="small comment-meta"><a href="#">@Model.Author</a> @Html.DisplayFor(model => model.Created) <a asp-page="./Thread" asp-route-id="@Model.Id" class="badge badge-secondary">@Model.Id</a></h6>
         <div class="comment-body">
             <p style="word-wrap: break-word;">
-                @Html.DisplayFor(model => model.Message)
-                <br />
+                @Html.Raw(Regex.Replace(Model.Message, @"\r?\n", "<br />"))
+                <br/>
                 <a asp-page="./CreateComment" asp-route-parentId="@Model.Id" class="text-right small"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
             </p>
         </div>
