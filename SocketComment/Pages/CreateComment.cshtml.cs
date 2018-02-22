@@ -12,6 +12,19 @@ namespace SocketComment.Pages
         [BindProperty]
         public Comment Comment { get; set; }
 
+        public IActionResult OnGet(string parentId)
+        {
+            if (!string.IsNullOrWhiteSpace(parentId))
+            {
+                Comment = new Comment
+                {
+                    Parent = parentId
+                };
+            }
+
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             Comment.Created = DateTime.Now;
@@ -26,7 +39,14 @@ namespace SocketComment.Pages
                 var resultComment = await store.StoreAsync(Comment);
             }
 
-            return RedirectToPage("/Index");
+            if (string.IsNullOrWhiteSpace(Comment.Parent))
+            {
+                return RedirectToPage("Index");
+            }
+            else
+            {
+                return Redirect("/Thread/" + Comment.Parent);
+            }
         }
     }
 }

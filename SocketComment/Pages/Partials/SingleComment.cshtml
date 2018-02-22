@@ -5,12 +5,12 @@
         <a href=""><i data-feather="user" width="40" height="40"></i></a>
     </div>
     <div class="comment-content col-md-11 col-sm-10 col-12">
-        <h6 class="small comment-meta"><a href="#">@Model.Author</a> @Html.DisplayFor(model => model.Created) <span class="badge badge-secondary">@Model.Id</span></h6>
+        <h6 class="small comment-meta"><a href="#">@Model.Author</a> @Html.DisplayFor(model => model.Created) <a asp-page="./Thread" asp-route-id="@Model.Id" class="badge badge-secondary">@Model.Id</a></h6>
         <div class="comment-body">
             <p style="word-wrap: break-word;">
                 @Html.DisplayFor(model => model.Message)
                 <br />
-                <a href="" class="text-right small"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
+                <a asp-page="./CreateComment" asp-route-parentId="@Model.Id" class="text-right small"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
             </p>
         </div>
     </div>

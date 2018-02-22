@@ -9,14 +9,13 @@
 
 @if (Model.RootComments != null)
 {
-    <table>
+    <div class="comment mb-2 row">
+
         @foreach (var rootComment in Model.RootComments)
         {
-            <tr>
-                <td>
-                    <p><a asp-page="./Thread" asp-route-id="@rootComment.Id">@rootComment.Message</a></p>
-                </td>
-            </tr>
+            <div class="comment col-12">
+                @{ Html.RenderPartial("Partials/SingleComment", rootComment); }
+            </div>
         }
-    </table>
+    </div>
 }
