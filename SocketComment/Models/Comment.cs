@@ -7,6 +7,8 @@ namespace SocketComment.Models
     {
         public string Id { get; set; }
 
+        public string Rev { get; set; }
+
         [Required]
         public string Author { get; set; }
 

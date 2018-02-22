@@ -9,7 +9,7 @@
 
 @if (Model.Thread.Root.Parent != null)
 {
-    <p>Parent comment: <a asp-page="./Thread" asp-route-id="@Model.Thread.Root.Parent">@Model.Thread.Root.Parent</a></p>
+    <p><a asp-page="./Thread" asp-route-id="@Model.Thread.Root.Parent"><i data-feather="chevron-up" width="12" height="12"></i> @Model.Thread.Root.Parent</a></p>
 }
 
 <div class="container">
