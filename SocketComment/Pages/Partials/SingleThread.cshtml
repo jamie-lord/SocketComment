@@ -1,0 +1,16 @@
+﻿@model SocketComment.Models.Thread
+
+<div class="comment mb-2 row">
+    <div class="comment col-12">
+        @{ Html.RenderPartial("Partials/SingleComment", Model.Root); }
+    </div>
+    @if (Model.Children != null && Model.Children.Any())
+    {
+        @foreach (var child in Model.Children)
+         {
+             <div class="comment-reply col-md-11 offset-md-1 col-sm-10 offset-sm-2">
+                 @{ Html.RenderPartial("Partials/SingleThread", child); }
+             </div>
+         }
+    }
+</div>

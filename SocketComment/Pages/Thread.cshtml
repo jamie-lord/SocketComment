@@ -15,20 +15,7 @@
 <div class="container">
     <div class="row">
         <div class="comments col-12" id="comments">
-            <div class="comment mb-2 row">
-                <div class="comment col-12">
-                    @{ Html.RenderPartial("Partials/SingleComment", Model.Thread.Root); }
-                </div>
-                @if (Model.Thread.Children != null && Model.Thread.Children.Any())
-                {
-                    @foreach (var child in Model.Thread.Children)
-                    {
-                        <div class="comment-reply col-md-11 offset-md-1 col-sm-10 offset-sm-2">
-                            @{ Html.RenderPartial("Partials/SingleComment", child); }
-                        </div>
-                    }
-                }
-            </div>
+            @{ Html.RenderPartial("Partials/SingleThread", Model.Thread); }
             <!-- /comment -->
             <div class="row pt-2">
                 <div class="col-12">

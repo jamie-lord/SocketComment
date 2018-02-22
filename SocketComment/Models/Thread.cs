@@ -6,6 +6,6 @@ namespace SocketComment.Models
     {
         public Comment Root { get; set; }
 
-        public List<Comment> Children { get; set; }
+        public List<Thread> Children { get; set; }
     }
 }

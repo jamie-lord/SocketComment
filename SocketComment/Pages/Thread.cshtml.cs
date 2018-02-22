@@ -42,7 +42,7 @@ namespace SocketComment.Pages
             return Page();
         }
 
-        private async Task<List<Comment>> GetChildComments(MyCouchStore store, Comment rootComment)
+        private async Task<List<Thread>> GetChildComments(MyCouchStore store, Comment rootComment)
         {
             //function(doc) {
             //    if (doc.$doctype == 'comment') {
@@ -57,12 +57,17 @@ namespace SocketComment.Pages
 
             var children = await store.QueryAsync<Comment>(query);
 
-            var result = new List<Comment>();
+            var result = new List<Thread>();
             foreach (var child in children)
             {
                 if (child.Value != null)
                 {
-                    result.Add(child.Value);
+                    var thread = new Thread()
+                    {
+                        Root = child.Value,
+                        Children = await GetChildComments(store, child.Value)
+                    };
+                    result.Add(thread);
                 }
             }
             return result;

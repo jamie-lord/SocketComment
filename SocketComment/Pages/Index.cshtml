@@ -13,7 +13,6 @@
         @foreach (var rootComment in Model.RootComments)
         {
             <tr>
-
                 <td>
                     <p><a asp-page="./Thread" asp-route-id="@rootComment.Id">@rootComment.Message</a></p>
                 </td>
