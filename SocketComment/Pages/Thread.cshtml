@@ -19,7 +19,7 @@
             <!-- /comment -->
             <div class="row pt-2">
                 <div class="col-12">
-                    <a href="" class="btn btn-sm btn-primary">Comment</a>
+                    <a asp-page="./CreateComment" asp-route-parentId="@Model.Thread.Root.Id" class="btn btn-primary">Comment</a>
                 </div>
             </div>
         </div>

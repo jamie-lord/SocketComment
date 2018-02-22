@@ -11,7 +11,7 @@ namespace SocketComment.Pages
     {
         public IActionResult OnGet()
         {
-            var faker = new Faker("en");
+            var faker = new Faker("ko");
 
             using (var store = new MyCouchStore("http://localhost:5984", "comments"))
             {
@@ -51,9 +51,17 @@ namespace SocketComment.Pages
 
         private Comment RandomComment(MyCouchStore store, Faker faker, string parentId)
         {
+            if (faker.Random.Bool())
+            {
+                faker.Locale = "ko";
+            }
+            else
+            {
+                faker.Locale = "zh_CN";
+            }
             var comment = new Comment
             {
-                Author = faker.Internet.UserName(),
+                Author = string.Join(" ", faker.Lorem.Words(faker.Random.Int(1, 5))),
                 Created = faker.Date.Past(5),
                 Message = faker.Lorem.Sentences(faker.Random.Int(1, 10), " "),
                 Parent = parentId
