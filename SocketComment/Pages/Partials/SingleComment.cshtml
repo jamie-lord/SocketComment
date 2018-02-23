@@ -1,19 +1,27 @@
 ﻿@using System.Text.RegularExpressions
-@model SocketComment.Models.Comment
+@{
+    var _comment = (Models.Comment)ViewBag.Comment;
+    var _parentId = (string)ViewBag.ParentId;
+}
 
 <div class="row" style="margin-bottom: 1em;">
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
         <i data-feather="user" width="40" height="40" color="#6c757d"></i>
     </div>
     <div class="comment-content col-md-11 col-sm-10 col-12">
-        <h6 class="small comment-meta"><a href="#">@Model.Author</a> @Html.DisplayFor(model => model.Created) <a asp-page="./Thread" asp-route-id="@Model.Id" class="badge badge-secondary">@Model.Id</a></h6>
+        <h6 class="small comment-meta"><strong>@_comment.Author</strong> @Html.DisplayFor(c => _comment.Created)</h6>
         <div class="comment-body">
             <p style="word-wrap: break-word; margin-bottom: 0em;">
-                @Html.Raw(Regex.Replace(Model.Message, @"\r?\n", "<br />"))
+                @Html.Raw(Regex.Replace(_comment.Message, @"\r?\n", "<br />"))
             </p>
             <div>
-                <a asp-page="./CreateComment" asp-route-parentId="@Model.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
-                <a href="#" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="trash-2" width="12" height="12"></i> Delete</a>
+                <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true" style="padding-left: 0em;"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
+                <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
+                @if (!string.IsNullOrWhiteSpace(_parentId))
+                {
+                    <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
+                }
+                <a href="#" class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete</a>
             </div>
         </div>
     </div>

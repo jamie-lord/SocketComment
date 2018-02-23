@@ -1,16 +1,16 @@
-﻿@model SocketComment.Models.Thread
+﻿@{ var _thread = (Models.Thread)ViewBag.Thread; }
 
 <div class="comment mb-2 row">
     <div class="comment col-12">
-        @{ Html.RenderPartial("Partials/SingleComment", Model.Root); }
+        @{ Html.RenderPartial("Partials/SingleComment", new ViewDataDictionary(new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()) { { "Comment", _thread.Root }, { "ParentId", _thread.Root.Parent } }); }
     </div>
-    @if (Model.Children != null && Model.Children.Any())
+    @if (_thread.Children != null && _thread.Children.Any())
     {
-        @foreach (var child in Model.Children)
-         {
-             <div class="comment-reply col-md-11 offset-md-1 col-sm-10 offset-sm-2">
-                 @{ Html.RenderPartial("Partials/SingleThread", child); }
-             </div>
-         }
+        @foreach (var childThread in _thread.Children)
+        {
+            <div class="comment-reply col-md-11 offset-md-1 col-sm-10 offset-sm-2">
+                @{ Html.RenderPartial("Partials/SingleThread", new ViewDataDictionary(new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()) { { "Thread", childThread } }); }
+            </div>
+        }
     }
 </div>

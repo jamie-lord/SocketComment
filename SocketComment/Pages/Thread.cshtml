@@ -15,7 +15,7 @@
 <div class="container">
     <div class="row">
         <div class="comments col-12" id="comments">
-            @{ Html.RenderPartial("Partials/SingleThread", Model.Thread); }
+            @{ Html.RenderPartial("Partials/SingleThread", new ViewDataDictionary(new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()) { { "Thread", Model.Thread } }); }
             <!-- /comment -->
             <div class="row pt-2">
                 <div class="col-12">

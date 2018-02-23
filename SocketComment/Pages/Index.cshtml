@@ -14,7 +14,7 @@
         @foreach (var rootComment in Model.RootComments)
         {
             <div class="comment col-12">
-                @{ Html.RenderPartial("Partials/SingleComment", rootComment); }
+                @{ Html.RenderPartial("Partials/SingleComment", new ViewDataDictionary(new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()) { { "Comment", rootComment } }); }
             </div>
         }
     </div>
