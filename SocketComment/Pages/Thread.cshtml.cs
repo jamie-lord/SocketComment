@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyCouch;
 using SocketComment.Models;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SocketComment.Pages
 {
-    public class ThreadModel : PageModel
+    public class ThreadModel : PageModel, IDisposable
     {
         [BindProperty]
         public Thread Thread { get; set; }
@@ -19,20 +20,17 @@ namespace SocketComment.Pages
                 return NotFound();
             }
 
-            using (var store = new MyCouchStore("http://localhost:5984", "comments"))
+            var rootComment = await _commentsStore.GetByIdAsync<Comment>(id);
+
+            if (rootComment != null)
             {
-                var rootComment = await store.GetByIdAsync<Comment>(id);
-
-                if (rootComment != null)
+                Thread = new Thread()
                 {
-                    Thread = new Thread()
-                    {
-                        Root = rootComment
-                    };
-                }
-
-                Thread.Children = await GetChildComments(store, Thread.Root);
+                    Root = rootComment
+                };
             }
+
+            Thread.Children = GetChildComments(Thread.Root);
 
             if (Thread == null)
             {
@@ -42,33 +40,34 @@ namespace SocketComment.Pages
             return Page();
         }
 
-        private const int MAX_DEPTH = 4;
+        private MyCouchStore _commentsStore = new MyCouchStore("http://localhost:5984", "comments");
+
         private const int MAX_COMMENTS = 100;
 
-        private async Task<List<Thread>> GetChildComments(MyCouchStore store, Comment rootComment, int depth = 0, int count = 0)
+        private IEnumerable<Thread> GetChildComments(Comment rootComment, int count = 0)
         {
+            // Returns comments sorted by created datetime
             //function(doc) {
             //    if (doc.$doctype == 'comment') {
-            //        emit(doc.parent, doc);
+            //        emit([doc.parent, doc.created], doc);
             //    }
             //}
 
-            if (depth > MAX_DEPTH || count > MAX_COMMENTS)
+            if (count > MAX_COMMENTS)
             {
-                return null;
+                yield break;
             }
 
-            depth++;
             count++;
 
             var query = new Query("comments", "children")
             {
-                Key = rootComment.Id
+                StartKey = new object[] { rootComment.Id },
+                EndKey = new object[] { rootComment.Id, new object() }
             };
 
-            var children = await store.QueryAsync<Comment>(query);
+            var children = _commentsStore.QueryAsync<Comment>(query).Result;
 
-            var result = new List<Thread>();
             foreach (var child in children)
             {
                 if (child.Value != null)
@@ -76,12 +75,16 @@ namespace SocketComment.Pages
                     var thread = new Thread()
                     {
                         Root = child.Value,
-                        Children = await GetChildComments(store, child.Value, depth, count)
+                        Children = GetChildComments(child.Value, count)
                     };
-                    result.Add(thread);
+                    yield return thread;
                 }
             }
-            return result;
+        }
+
+        public void Dispose()
+        {
+            _commentsStore.Dispose();
         }
     }
 }

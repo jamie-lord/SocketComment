@@ -4,26 +4,43 @@ using MyCouch;
 using SocketComment.Models;
 using Bogus;
 using System.Collections.Generic;
+using System;
+using Bogus.DataSets;
 
 namespace SocketComment.Pages
 {
     public class TestDataModel : PageModel
     {
-        public IActionResult OnGet()
+        public IActionResult OnGet(int count = 100)
         {
-            var faker = new Faker("ko");
-
+            _count = count;
+            string rootId = null;
             using (var store = new MyCouchStore("http://localhost:5984", "comments"))
             {
-                var thread = RandomThread(store, faker, null);
+                var thread = RandomThread(store, null, 0);
+                rootId = thread.Root.Id;
             }
 
-            return RedirectToPage("Index");
+            if (rootId != null)
+            {
+                return Redirect("/Thread/" + rootId);
+            }
+            else
+            {
+                return RedirectToPage("Index");
+            }
         }
 
-        private Thread RandomThread(MyCouchStore store, Faker faker, string parentId, int depth = 0)
+        private int _count;
+
+        private const int MAX_CHILD_COMMENTS_PER_THREAD = 20;
+        private const int MAX_CHILD_COMMENT_DEPTH = 5;
+
+        private Random _random = new Random();
+
+        private Thread RandomThread(MyCouchStore store, Comment parent, int depth)
         {
-            if (depth == 5)
+            if (_count < 0 || depth > MAX_CHILD_COMMENT_DEPTH)
             {
                 return null;
             }
@@ -32,13 +49,18 @@ namespace SocketComment.Pages
 
             var thread = new Thread
             {
-                Root = RandomComment(store, faker, parentId)
+                Root = RandomComment(store, parent)
             };
 
-            var children = new List<Thread>();
-            for (int i = 0; i < faker.Random.Int(0, 10); i++)
+            if (thread.Root == null)
             {
-                var child = RandomThread(store, faker, thread.Root.Id, depth);
+                return null;
+            }
+
+            var children = new List<Thread>();
+            for (int i = 0; i < _random.Next(MAX_CHILD_COMMENT_DEPTH - depth, MAX_CHILD_COMMENTS_PER_THREAD + 1); i++)
+            {
+                var child = RandomThread(store, thread.Root, depth);
                 if (child != null)
                 {
                     children.Add(child);
@@ -49,25 +71,61 @@ namespace SocketComment.Pages
             return thread;
         }
 
-        private Comment RandomComment(MyCouchStore store, Faker faker, string parentId)
+        private Comment RandomComment(MyCouchStore store, Comment parent)
         {
-            if (faker.Random.Bool())
+            if (_count < 0)
             {
-                faker.Locale = "ko";
+                return null;
+            }
+            _count--;
+
+            Faker faker = null;
+
+            switch (_random.Next(0, 4))
+            {
+                case 0:
+                    faker = new Faker("ko");
+                    break;
+                case 1:
+                    faker = new Faker("ru");
+                    break;
+                case 2:
+                    faker = new Faker("cz");
+                    break;
+                case 3:
+                    faker = new Faker("sv");
+                    break;
+            }
+
+            var comment = new Comment
+            {
+                Author = faker.Name.FullName(Name.Gender.Female),
+                Message = faker.Lorem.Sentences(_random.Next(1, 11), " "),
+                Parent = parent?.Id
+            };
+
+            if (parent?.Created == null)
+            {
+                comment.Created = faker.Date.Past(5);
             }
             else
             {
-                faker.Locale = "zh_CN";
+                comment.Created = Future(2, parent.Created);
             }
-            var comment = new Comment
-            {
-                Author = string.Join(" ", faker.Lorem.Words(faker.Random.Int(1, 5))),
-                Created = faker.Date.Past(5),
-                Message = faker.Lorem.Sentences(faker.Random.Int(1, 10), " "),
-                Parent = parentId
-            };
+
             comment = store.StoreAsync(comment).Result;
             return comment;
+        }
+
+        private DateTime Future(int daysToGoForward = 1, DateTime? refDate = null)
+        {
+            var minDate = refDate ?? DateTime.Now;
+            var maxDate = minDate.AddDays(daysToGoForward);
+            var totalTimeSpanTicks = (maxDate - minDate).Ticks;
+            //find % of the timespan
+            var partTimeSpanTicks = _random.NextDouble() * totalTimeSpanTicks;
+            var partTimeSpan = TimeSpan.FromTicks(Convert.ToInt64(partTimeSpanTicks));
+            return minDate + partTimeSpan;
         }
     }
 }

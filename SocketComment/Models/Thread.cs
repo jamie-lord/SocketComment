@@ -7,7 +7,7 @@ namespace SocketComment.Models
     {
         public Comment Root { get; set; }
 
-        public List<Thread> Children { get; set; }
+        public IEnumerable<Thread> Children { get; set; }
 
         public int ChildCount
         {
@@ -17,7 +17,7 @@ namespace SocketComment.Models
                 {
                     return 0;
                 }
-                return Children.Count + Children.Sum(c => c.ChildCount);
+                return Children.Count() + Children.Sum(c => c.ChildCount);
             }
         }
     }
