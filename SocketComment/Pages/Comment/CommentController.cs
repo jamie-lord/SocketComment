@@ -51,6 +51,10 @@ namespace SocketComment.Pages.Comment
                 await _commentsStore.DeleteAsync(i);
             }
 
+            if (rootComment.Parent != null)
+            {
+                return Redirect("/Thread/" + rootComment.Parent);
+            }
             return RedirectToPage("/Index");
         }
 
@@ -87,9 +91,10 @@ namespace SocketComment.Pages.Comment
             }
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             _commentsStore.Dispose();
+            base.Dispose();
         }
     }
 }

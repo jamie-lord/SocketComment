@@ -29,6 +29,10 @@ namespace SocketComment.Pages
                     Root = rootComment
                 };
             }
+            else
+            {
+                return NotFound();
+            }
 
             Thread.Children = GetChildComments(Thread.Root);
 
