@@ -20,5 +20,13 @@ namespace SocketComment.Models
                 return Children.Count() + Children.Sum(c => c.ChildCount);
             }
         }
+
+        public IEnumerable<string> ChildIds
+        {
+            get
+            {
+                return Children.SelectMany(c => c.ChildIds).Concat(new List<string> { Root.Id });
+            }
+        }
     }
 }

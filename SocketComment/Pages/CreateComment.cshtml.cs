@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyCouch;
-using SocketComment.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -10,13 +9,13 @@ namespace SocketComment.Pages
     public class CreateCommentModel : PageModel
     {
         [BindProperty]
-        public Comment Comment { get; set; }
+        public Models.Comment Comment { get; set; }
 
         public IActionResult OnGet(string parentId)
         {
             if (!string.IsNullOrWhiteSpace(parentId))
             {
-                Comment = new Comment
+                Comment = new Models.Comment
                 {
                     Parent = parentId
                 };

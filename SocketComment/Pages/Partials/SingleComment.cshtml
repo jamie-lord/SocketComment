@@ -21,7 +21,7 @@
                 {
                     <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
                 }
-                <a href="#" class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete</a>
+                <a asp-controller="Comment" asp-action="Delete" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete</a>
             </div>
         </div>
     </div>

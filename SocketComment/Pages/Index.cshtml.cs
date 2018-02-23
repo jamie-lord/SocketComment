@@ -3,14 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyCouch;
-using SocketComment.Models;
 
 namespace SocketComment.Pages
 {
     public class IndexModel : PageModel
     {
         [BindProperty]
-        public List<Comment> RootComments { get; set; }
+        public List<Models.Comment> RootComments { get; set; }
 
         public async Task<IActionResult> OnGet()
         {
@@ -24,9 +23,9 @@ namespace SocketComment.Pages
             {
                 var query = new Query("comments", "all_roots");
 
-                var r = await store.QueryAsync<Comment>(query);
+                var r = await store.QueryAsync<Models.Comment>(query);
 
-                RootComments = new List<Comment>();
+                RootComments = new List<Models.Comment>();
                 foreach (var row in r)
                 {
                     RootComments.Add(row.Value);

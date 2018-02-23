@@ -38,7 +38,7 @@ namespace SocketComment.Pages
 
         private Random _random = new Random();
 
-        private Thread RandomThread(MyCouchStore store, Comment parent, int depth)
+        private Thread RandomThread(MyCouchStore store, Models.Comment parent, int depth)
         {
             if (_count < 0 || depth > MAX_CHILD_COMMENT_DEPTH)
             {
@@ -71,7 +71,7 @@ namespace SocketComment.Pages
             return thread;
         }
 
-        private Comment RandomComment(MyCouchStore store, Comment parent)
+        private Models.Comment RandomComment(MyCouchStore store, Models.Comment parent)
         {
             if (_count < 0)
             {
@@ -97,7 +97,7 @@ namespace SocketComment.Pages
                     break;
             }
 
-            var comment = new Comment
+            var comment = new Models.Comment
             {
                 Author = faker.Name.FullName(Name.Gender.Female),
                 Message = faker.Lorem.Sentences(_random.Next(1, 11), " "),

@@ -1,19 +1,32 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyCouch;
 using SocketComment.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SocketComment.Pages
+namespace SocketComment.Pages.Comment
 {
-    public class ThreadModel : PageModel, IDisposable
+    [Produces("application/json")]
+    [Route("Comment")]
+    public class CommentController : Controller, IDisposable
     {
-        [BindProperty]
-        public Thread Thread { get; set; }
+        // GET: api/Comment/5
+        [HttpGet("{id}", Name = "Get")]
+        public string Get(int id)
+        {
+            return "value";
+        }
 
-        public async Task<IActionResult> OnGet(string id)
+        // POST: api/Comment
+        [HttpPost]
+        public void Post([FromBody]string value)
+        {
+        }
+
+        // DELETE: api/ApiWithActions/5
+        [HttpGet("Delete/{id}", Name = "Delete")]
+        public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -22,29 +35,28 @@ namespace SocketComment.Pages
 
             var rootComment = await _commentsStore.GetByIdAsync<Models.Comment>(id);
 
-            if (rootComment != null)
-            {
-                Thread = new Thread()
-                {
-                    Root = rootComment
-                };
-            }
-
-            Thread.Children = GetChildComments(Thread.Root);
-
-            if (Thread == null)
+            if (rootComment == null)
             {
                 return NotFound();
             }
 
-            return Page();
+            var thread = new Thread()
+            {
+                Root = rootComment,
+                Children = GetChildComments(rootComment)
+            };
+
+            foreach (var i in thread.ChildIds)
+            {
+                await _commentsStore.DeleteAsync(i);
+            }
+
+            return RedirectToPage("/Index");
         }
 
         private MyCouchStore _commentsStore = new MyCouchStore("http://localhost:5984", "comments");
 
-        private const int MAX_COMMENTS = 100;
-
-        private IEnumerable<Thread> GetChildComments(Models.Comment rootComment, int count = 0)
+        private IEnumerable<Thread> GetChildComments(Models.Comment rootComment)
         {
             // Returns comments sorted by created datetime
             //function(doc) {
@@ -52,13 +64,6 @@ namespace SocketComment.Pages
             //        emit([doc.parent, doc.created], doc);
             //    }
             //}
-
-            if (count > MAX_COMMENTS)
-            {
-                yield break;
-            }
-
-            count++;
 
             var query = new Query("comments", "children")
             {
@@ -75,7 +80,7 @@ namespace SocketComment.Pages
                     var thread = new Thread()
                     {
                         Root = child.Value,
-                        Children = GetChildComments(child.Value, count)
+                        Children = GetChildComments(child.Value)
                     };
                     yield return thread;
                 }
