@@ -9,19 +9,45 @@
         <i data-feather="user" width="40" height="40" color="#6c757d"></i>
     </div>
     <div class="comment-content col-md-11 col-sm-10 col-12">
-        <h6 class="small comment-meta"><strong>@_comment.Author</strong> @Html.DisplayFor(c => _comment.Created)</h6>
+        <h6 class="small comment-meta">
+            <strong>
+                @if (_comment.Deleted)
+                {
+                    @Html.Raw("[Deleted]");
+                }
+                else
+                {
+                    @_comment.Author
+                }
+            </strong> @Html.DisplayFor(c => _comment.Created)
+        </h6>
         <div class="comment-body">
             <p style="word-wrap: break-word; margin-bottom: 0em;">
-                @Html.Raw(Regex.Replace(_comment.Message, @"\r?\n", "<br />"))
-            </p>
-            <div>
-                <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true" style="padding-left: 0em;"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
-                <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
-                @if (!string.IsNullOrWhiteSpace(_parentId))
+                @if (_comment.Deleted)
                 {
-                    <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
+                    @Html.Raw("[Deleted]");
                 }
-                <a asp-controller="Comment" asp-action="Delete" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete</a>
+                else
+                {
+                    @Html.Raw(Regex.Replace(_comment.Message, @"\r?\n", "<br />"));
+                }
+            </p>
+            <div class="comment-actions">
+                @if (_comment.Deleted && _comment.Parent == null)
+                {
+                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
+                }
+                else if (!_comment.Deleted)
+                {
+                    <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
+                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
+                    @if (!string.IsNullOrWhiteSpace(_parentId))
+                    {
+                        <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
+                    }
+                    <a asp-controller="Comment" asp-action="DeleteComment" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete comment</a>
+                }
+                <a asp-controller="Comment" asp-action="DeleteThread" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete thread</a>
             </div>
         </div>
     </div>

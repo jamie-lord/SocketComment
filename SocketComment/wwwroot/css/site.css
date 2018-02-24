@@ -31,3 +31,7 @@ body {
         display: none;
     }
 }
+
+.comment-actions a {
+    padding-left: 0em;
+}

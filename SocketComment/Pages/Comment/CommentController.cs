@@ -24,9 +24,8 @@ namespace SocketComment.Pages.Comment
         {
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpGet("Delete/{id}", Name = "Delete")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpGet("DeleteThread/{id}", Name = "DeleteThread")]
+        public async Task<IActionResult> DeleteThread(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -56,6 +55,28 @@ namespace SocketComment.Pages.Comment
                 return Redirect("/Thread/" + rootComment.Parent);
             }
             return RedirectToPage("/Index");
+        }
+
+        [HttpGet("DeleteComment/{id}", Name = "DeleteComment")]
+        public async Task<IActionResult> DeleteComment(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return NotFound();
+            }
+
+            var comment = await _commentsStore.GetByIdAsync<Models.Comment>(id);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            DeleteComment(comment);
+
+            comment = await _commentsStore.StoreAsync(comment);
+
+            return Redirect("/Thread/" + comment.Id);
         }
 
         private MyCouchStore _commentsStore = new MyCouchStore("http://localhost:5984", "comments");
@@ -89,6 +110,13 @@ namespace SocketComment.Pages.Comment
                     yield return thread;
                 }
             }
+        }
+
+        private void DeleteComment(Models.Comment comment)
+        {
+            comment.Author = null;
+            comment.Message = null;
+            comment.Deleted = true;
         }
 
         public new void Dispose()

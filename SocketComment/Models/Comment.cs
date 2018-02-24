@@ -18,5 +18,7 @@ namespace SocketComment.Models
         public string Message { get; set; }
 
         public string Parent { get; set; }
+
+        public bool Deleted { get; set; }
     }
 }
