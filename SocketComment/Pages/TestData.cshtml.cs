@@ -40,7 +40,7 @@ namespace SocketComment.Pages
 
         private Thread RandomThread(MyCouchStore store, Models.Comment parent, int depth)
         {
-            if (_count < 0 || depth > MAX_CHILD_COMMENT_DEPTH)
+            if (_count <= 0 || depth > MAX_CHILD_COMMENT_DEPTH)
             {
                 return null;
             }
@@ -73,7 +73,7 @@ namespace SocketComment.Pages
 
         private Models.Comment RandomComment(MyCouchStore store, Models.Comment parent)
         {
-            if (_count < 0)
+            if (_count <= 0)
             {
                 return null;
             }
