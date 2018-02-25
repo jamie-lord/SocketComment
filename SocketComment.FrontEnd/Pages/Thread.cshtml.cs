@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SocketComment.Models;
 using System.Threading.Tasks;
 
-namespace SocketComment.Pages
+namespace SocketComment.FrontEnd.Pages
 {
     public class ThreadModel : PageModel
     {

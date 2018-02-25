@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SocketComment.Pages
+namespace SocketComment.FrontEnd.Pages
 {
     public class ErrorModel : PageModel
     {

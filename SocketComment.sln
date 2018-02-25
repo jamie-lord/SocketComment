@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocketComment", "SocketComment\SocketComment.csproj", "{8EA5EBAF-2596-4312-90B0-1AE0FF768992}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocketComment.FrontEnd", "SocketComment.FrontEnd\SocketComment.FrontEnd.csproj", "{8EA5EBAF-2596-4312-90B0-1AE0FF768992}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocketComment", "SocketComment\SocketComment.csproj", "{F7DE97B8-AC85-4662-A0C5-9EB0CE333E58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8EA5EBAF-2596-4312-90B0-1AE0FF768992}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EA5EBAF-2596-4312-90B0-1AE0FF768992}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EA5EBAF-2596-4312-90B0-1AE0FF768992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7DE97B8-AC85-4662-A0C5-9EB0CE333E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7DE97B8-AC85-4662-A0C5-9EB0CE333E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7DE97B8-AC85-4662-A0C5-9EB0CE333E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7DE97B8-AC85-4662-A0C5-9EB0CE333E58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

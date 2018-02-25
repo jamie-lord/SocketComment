@@ -1,8 +1,8 @@
-﻿using MyCouch;
-using SocketComment.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MyCouch;
+using SocketComment.Models;
 
 namespace SocketComment
 {

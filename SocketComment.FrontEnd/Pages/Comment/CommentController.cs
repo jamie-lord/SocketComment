@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace SocketComment.Pages.Comment
+namespace SocketComment.FrontEnd.Pages.Comment
 {
     [Produces("application/json")]
     [Route("Comment")]

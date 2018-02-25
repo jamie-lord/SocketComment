@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace SocketComment
+namespace SocketComment.FrontEnd
 {
     public class Program
     {

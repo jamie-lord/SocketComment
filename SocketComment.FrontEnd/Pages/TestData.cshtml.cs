@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System;
 using Bogus.DataSets;
 
-namespace SocketComment.Pages
+namespace SocketComment.FrontEnd.Pages
 {
     public class TestDataModel : PageModel
     {
