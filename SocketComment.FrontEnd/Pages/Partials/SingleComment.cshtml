@@ -1,4 +1,4 @@
-﻿@using System.Text.RegularExpressions
+﻿@using Markdig;
 @{
     var _comment = (Models.Comment)ViewBag.Comment;
     var _parentId = (string)ViewBag.ParentId;
@@ -6,7 +6,14 @@
 
 <div class="row" style="margin-bottom: 1em;">
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
-        <i data-feather="user" width="40" height="40" color="#6c757d"></i>
+        @if (_comment.Deleted)
+        {
+            <i data-feather="trash-2" width="40" height="40" color="#6c757d"></i>
+        }
+        else
+        {
+            <i data-feather="user" width="40" height="40" color="#6c757d"></i>
+        }
     </div>
     <div class="comment-content col-md-11 col-sm-10 col-12">
         <h6 class="small comment-meta">
@@ -22,16 +29,16 @@
             </strong> @Html.DisplayFor(c => _comment.Created)
         </h6>
         <div class="comment-body">
-            <p style="word-wrap: break-word; margin-bottom: 0em;">
+            <div style="word-wrap: break-word; margin-bottom: 0em;">
                 @if (_comment.Deleted)
                 {
                     @Html.Raw("[Deleted]");
                 }
                 else
                 {
-                    @Html.Raw(Regex.Replace(_comment.Message, @"\r?\n", "<br />"));
+                    @Html.Raw(Markdown.ToHtml(_comment.Message));
                 }
-            </p>
+            </div>
             <div class="comment-actions">
                 @if (_comment.Deleted && _comment.Parent == null)
                 {
