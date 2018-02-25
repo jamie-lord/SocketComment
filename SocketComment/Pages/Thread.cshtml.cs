@@ -19,7 +19,7 @@ namespace SocketComment.Pages
 
         public async Task<IActionResult> OnGet(string id)
         {
-            Thread = await _commentService.GetThread(id);
+            Thread = await _commentService.GetThread(id, 100);
 
             if (Thread == null)
             {
