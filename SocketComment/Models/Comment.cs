@@ -20,6 +20,6 @@ namespace SocketComment.Models
 
         public string Parent { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool? Deleted { get; set; }
     }
 }

@@ -6,7 +6,7 @@
 
 <div class="row" style="margin-bottom: 1em;">
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
-        @if (_comment.Deleted)
+        @if (_comment.Deleted == true)
         {
             <i data-feather="trash-2" width="40" height="40" color="#6c757d"></i>
         }
@@ -18,7 +18,7 @@
     <div class="comment-content col-md-11 col-sm-10 col-12">
         <h6 class="small comment-meta">
             <strong>
-                @if (_comment.Deleted)
+                @if (_comment.Deleted == true)
                 {
                     @Html.Raw("[Deleted]");
                 }
@@ -30,7 +30,7 @@
         </h6>
         <div class="comment-body">
             <div style="word-wrap: break-word; margin-bottom: 0em;">
-                @if (_comment.Deleted)
+                @if (_comment.Deleted == true)
                 {
                     @Html.Raw("[Deleted]");
                 }
@@ -40,15 +40,15 @@
                 }
             </div>
             <div class="comment-actions">
-                @if (_comment.Deleted && _comment.Parent == null)
+                @if (_comment.Deleted == true && _comment.Parent == null)
                 {
-                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
+                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
                 }
-                else if (!_comment.Deleted)
+                else if (_comment.Deleted == null || _comment.Deleted == false)
                 {
                     <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
-                    <a asp-page="./Edit" asp-route-id="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true">Edit</a>
-                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
+                    <a asp-page="./Edit" asp-route-id="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="edit-2" width="12" height="12"></i> Edit</a>
+                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
                     @if (!string.IsNullOrWhiteSpace(_parentId))
                     {
                         <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>

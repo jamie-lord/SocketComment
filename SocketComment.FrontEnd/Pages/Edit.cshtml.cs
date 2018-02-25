@@ -25,6 +25,11 @@ namespace SocketComment.FrontEnd.Pages
 
             Comment = await _commentService.GetComment(id);
 
+            if (Comment.Deleted == true)
+            {
+                return new BadRequestResult();
+            }
+
             return Page();
         }
 
