@@ -42,6 +42,34 @@ namespace SocketComment
             return await _commentStore.StoreAsync(comment);
         }
 
+        //function(doc) {
+        //    if (doc.$doctype == "comment" && doc.parent == null) {
+        //        emit(null, doc);
+        //    }
+        //}
+
+        public IEnumerable<Comment> GetAllRootComments()
+        {
+            var query = new Query("comments", "all_roots");
+
+            var result = _commentStore.QueryAsync<Comment>(query).Result;
+
+            if (result == null)
+            {
+                yield break;
+            }
+
+            foreach (var c in result)
+            {
+                if (c.Value != null)
+                {
+                    yield return c.Value;
+                }
+            }
+
+            yield break;
+        }
+
         private MyCouchStore _commentStore = new MyCouchStore("http://localhost:5984", "comments");
 
         private const int MAX_COMMENTS = 100;
