@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MyCouch;
 using System;
 using System.Threading.Tasks;
 
@@ -8,6 +7,13 @@ namespace SocketComment.Pages
 {
     public class CreateCommentModel : PageModel
     {
+        public CreateCommentModel(CommentService commentService)
+        {
+            _commentService = commentService;
+        }
+
+        private CommentService _commentService;
+
         [BindProperty]
         public Models.Comment Comment { get; set; }
 
@@ -33,10 +39,7 @@ namespace SocketComment.Pages
                 return Page();
             }
 
-            using (var store = new MyCouchStore("http://localhost:5984", "comments"))
-            {
-                var resultComment = await store.StoreAsync(Comment);
-            }
+            var resultComment = await _commentService.StoreComment(Comment);
 
             if (string.IsNullOrWhiteSpace(Comment.Parent))
             {
