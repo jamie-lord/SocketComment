@@ -45,7 +45,7 @@ namespace SocketComment.Pages.Comment
                 Children = GetChildComments(rootComment)
             };
 
-            foreach (var i in thread.ChildIds)
+            foreach (var i in thread.AllChildIds)
             {
                 await _commentsStore.DeleteAsync(i);
             }

@@ -15,7 +15,7 @@ namespace SocketComment
                 return null;
             }
 
-            var rootComment = await _commentsStore.GetByIdAsync<Models.Comment>(rootCommentId);
+            var rootComment = await _commentStore.GetByIdAsync<Comment>(rootCommentId);
 
             if (rootComment == null)
             {
@@ -32,7 +32,17 @@ namespace SocketComment
             return thread;
         }
 
-        private MyCouchStore _commentsStore = new MyCouchStore("http://localhost:5984", "comments");
+        public async Task<Comment> StoreComment(Comment comment)
+        {
+            if (comment == null)
+            {
+                return null;
+            }
+
+            return await _commentStore.StoreAsync(comment);
+        }
+
+        private MyCouchStore _commentStore = new MyCouchStore("http://localhost:5984", "comments");
 
         private const int MAX_COMMENTS = 100;
 
@@ -58,7 +68,7 @@ namespace SocketComment
                 EndKey = new object[] { rootComment.Id, new object() }
             };
 
-            var children = _commentsStore.QueryAsync<Comment>(query).Result;
+            var children = _commentStore.QueryAsync<Comment>(query).Result;
 
             foreach (var child in children)
             {
@@ -76,7 +86,7 @@ namespace SocketComment
 
         public void Dispose()
         {
-            _commentsStore.Dispose();
+            _commentStore.Dispose();
         }
     }
 }

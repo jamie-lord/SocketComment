@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MyCouch;
 using SocketComment.Models;
 using Bogus;
 using System.Collections.Generic;
@@ -11,19 +10,21 @@ namespace SocketComment.Pages
 {
     public class TestDataModel : PageModel
     {
+        public TestDataModel(CommentService commentService)
+        {
+            _commentService = commentService;
+        }
+
+        private CommentService _commentService;
+
         public IActionResult OnGet(int count = 100)
         {
             _count = count;
-            string rootId = null;
-            using (var store = new MyCouchStore("http://localhost:5984", "comments"))
-            {
-                var thread = RandomThread(store, null, 0);
-                rootId = thread.Root.Id;
-            }
+            var thread = RandomThread(null, 0);
 
-            if (rootId != null)
+            if (thread.Root.Id != null)
             {
-                return Redirect("/Thread/" + rootId);
+                return Redirect("/Thread/" + thread.Root.Id);
             }
             else
             {
@@ -38,7 +39,7 @@ namespace SocketComment.Pages
 
         private Random _random = new Random();
 
-        private Thread RandomThread(MyCouchStore store, Models.Comment parent, int depth)
+        private Thread RandomThread(Models.Comment parent, int depth)
         {
             if (_count <= 0 || depth > MAX_CHILD_COMMENT_DEPTH)
             {
@@ -49,7 +50,7 @@ namespace SocketComment.Pages
 
             var thread = new Thread
             {
-                Root = RandomComment(store, parent)
+                Root = RandomComment(parent)
             };
 
             if (thread.Root == null)
@@ -60,7 +61,7 @@ namespace SocketComment.Pages
             var children = new List<Thread>();
             for (int i = 0; i < _random.Next(MAX_CHILD_COMMENT_DEPTH - depth, MAX_CHILD_COMMENTS_PER_THREAD + 1); i++)
             {
-                var child = RandomThread(store, thread.Root, depth);
+                var child = RandomThread(thread.Root, depth);
                 if (child != null)
                 {
                     children.Add(child);
@@ -71,7 +72,7 @@ namespace SocketComment.Pages
             return thread;
         }
 
-        private Models.Comment RandomComment(MyCouchStore store, Models.Comment parent)
+        private Models.Comment RandomComment(Models.Comment parent)
         {
             if (_count <= 0)
             {
@@ -113,7 +114,7 @@ namespace SocketComment.Pages
                 comment.Created = Future(2, parent.Created);
             }
 
-            comment = store.StoreAsync(comment).Result;
+            comment = _commentService.StoreComment(comment).Result;
             return comment;
         }
 

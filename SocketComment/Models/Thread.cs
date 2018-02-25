@@ -21,11 +21,11 @@ namespace SocketComment.Models
             }
         }
 
-        public IEnumerable<string> ChildIds
+        public IEnumerable<string> AllChildIds
         {
             get
             {
-                return Children.SelectMany(c => c.ChildIds).Concat(new List<string> { Root.Id });
+                return Children.SelectMany(c => c.AllChildIds).Concat(new List<string> { Root.Id });
             }
         }
     }
