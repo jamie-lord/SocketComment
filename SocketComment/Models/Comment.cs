@@ -15,6 +15,7 @@ namespace SocketComment.Models
         public DateTime Created { get; set; }
 
         [Required]
+        [DataType(DataType.MultilineText)]
         public string Message { get; set; }
 
         public string Parent { get; set; }

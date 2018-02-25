@@ -37,6 +37,16 @@ namespace SocketComment
             return thread;
         }
 
+        public async Task<Comment> GetComment(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
+            return await _commentStore.GetByIdAsync<Comment>(id);
+        }
+
         /// <summary>
         /// Stores a single comment and returns the complete object as it would be found in the dataabase.
         /// </summary>

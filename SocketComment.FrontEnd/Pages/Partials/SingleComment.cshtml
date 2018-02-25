@@ -47,6 +47,7 @@
                 else if (!_comment.Deleted)
                 {
                     <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
+                    <a asp-page="./Edit" asp-route-id="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true">Edit</a>
                     <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm">Permalink</a>
                     @if (!string.IsNullOrWhiteSpace(_parentId))
                     {
