@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CacheManager.Core;
 using MyCouch;
 using SocketComment.Models;
 
@@ -8,6 +9,13 @@ namespace SocketComment
 {
     public class CommentService : IDisposable
     {
+        private MyCouchStore _commentStore = new MyCouchStore("http://localhost:5984", "comments");
+
+        private ICacheManager<Comment> _commentCache = CacheFactory.Build<Comment>(settings =>
+        {
+            settings.WithMicrosoftMemoryCacheHandle();
+        });
+
         /// <summary>
         /// Returns a complete thread with the specified number of comments, default is all comments.
         /// </summary>
@@ -20,7 +28,7 @@ namespace SocketComment
                 return null;
             }
 
-            var rootComment = await _commentStore.GetByIdAsync<Comment>(rootCommentId);
+            var rootComment = await GetComment(rootCommentId);
 
             if (rootComment == null)
             {
@@ -43,8 +51,16 @@ namespace SocketComment
             {
                 return null;
             }
-
-            return await _commentStore.GetByIdAsync<Comment>(id);
+            var comment = _commentCache.Get(id);
+            if (comment == null)
+            {
+                comment = await _commentStore.GetByIdAsync<Comment>(id);
+                if (comment != null)
+                {
+                    _commentCache.Add(comment.Id, comment);
+                }
+            }
+            return comment;
         }
 
         /// <summary>
@@ -58,8 +74,9 @@ namespace SocketComment
             {
                 return null;
             }
-
-            return await _commentStore.StoreAsync(comment);
+            comment = await _commentStore.StoreAsync(comment);
+            _commentCache.Put(comment.Id, comment);
+            return comment;
         }
 
         //function(doc) {
@@ -101,7 +118,7 @@ namespace SocketComment
         /// <returns></returns>
         public async Task<string> DeleteThread(string id)
         {
-            var rootComment = await _commentStore.GetByIdAsync<Comment>(id);
+            var rootComment = await GetComment(id);
 
             if (rootComment == null)
             {
@@ -116,7 +133,7 @@ namespace SocketComment
 
             foreach (var i in thread.AllChildIds)
             {
-                await _commentStore.DeleteAsync(i);
+                await DeleteComment(i);
             }
 
             return rootComment.Parent;
@@ -129,7 +146,7 @@ namespace SocketComment
         /// <returns></returns>
         public async Task<string> ShadowDeleteComment(string id)
         {
-            var comment = await _commentStore.GetByIdAsync<Comment>(id);
+            var comment = await GetComment(id);
             if (comment == null)
             {
                 return null;
@@ -139,7 +156,7 @@ namespace SocketComment
             comment.Message = null;
             comment.Deleted = true;
 
-            comment = await _commentStore.StoreAsync(comment);
+            comment = await StoreComment(comment);
             return comment.Id;
         }
 
@@ -150,10 +167,14 @@ namespace SocketComment
         /// <returns></returns>
         public async Task<bool> DeleteComment(string id)
         {
-            return await _commentStore.DeleteAsync(id);
-        }
+            var success = await _commentStore.DeleteAsync(id);
+            if (success)
+            {
+                _commentCache.Remove(id);
+            }
 
-        private MyCouchStore _commentStore = new MyCouchStore("http://localhost:5984", "comments");
+            return success;
+        }
 
         // Returns comments sorted by created datetime
         //function(doc) {
@@ -196,6 +217,7 @@ namespace SocketComment
         public void Dispose()
         {
             _commentStore.Dispose();
+            _commentCache.Dispose();
         }
     }
 }
