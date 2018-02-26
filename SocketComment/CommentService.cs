@@ -79,9 +79,10 @@ namespace SocketComment
             return comment;
         }
 
-        //function(doc) {
+        //function(doc)
+        //{
         //    if (doc.$doctype == "comment" && doc.parent == null) {
-        //        emit(null, doc);
+        //        emit(null, doc.Id);
         //    }
         //}
 
@@ -93,7 +94,7 @@ namespace SocketComment
         {
             var query = new Query("comments", "all_roots");
 
-            var result = _commentStore.QueryAsync<Comment>(query).Result;
+            var result = _commentStore.QueryAsync(query).Result;
 
             if (result == null)
             {
@@ -102,9 +103,9 @@ namespace SocketComment
 
             foreach (var c in result)
             {
-                if (c.Value != null)
+                if (c.Id != null)
                 {
-                    yield return c.Value;
+                    yield return GetComment(c.Id).Result;
                 }
             }
 
@@ -176,10 +177,10 @@ namespace SocketComment
             return success;
         }
 
-        // Returns comments sorted by created datetime
-        //function(doc) {
+        //function(doc)
+        //{
         //    if (doc.$doctype == 'comment') {
-        //        emit([doc.parent, doc.created], doc);
+        //        emit([doc.parent, doc.created], doc.Id);
         //    }
         //}
 
@@ -198,16 +199,22 @@ namespace SocketComment
                 EndKey = new object[] { rootComment.Id, new object() }
             };
 
-            var children = _commentStore.QueryAsync<Comment>(query).Result;
+            var children = _commentStore.QueryAsync(query).Result;
 
             foreach (var child in children)
             {
-                if (child.Value != null)
+                if (child.Id != null)
                 {
+                    var comment = GetComment(child.Id).Result;
+                    if (comment == null)
+                    {
+                        continue;
+                    }
+
                     var thread = new Thread()
                     {
-                        Root = child.Value,
-                        Children = GetChildComments(child.Value, maxComments, count)
+                        Root = comment,
+                        Children = GetChildComments(comment, maxComments, count)
                     };
                     yield return thread;
                 }
