@@ -9,12 +9,47 @@ namespace SocketComment
 {
     public class CommentService : IDisposable
     {
-        private MyCouchStore _commentStore = new MyCouchStore("http://localhost:5984", "comments");
+        private const string USERNAME = "CommentService";
+        private const string PASSWORD = "CommentService";
+        private const string SERVER = "http://" + USERNAME + ":" + PASSWORD + "@localhost:5984";
+        private const string DATABASE = "comments";
 
-        private ICacheManager<Comment> _commentCache = CacheFactory.Build<Comment>(settings =>
+        private readonly MyCouchStore _commentStore;
+        private readonly ICacheManager<Comment> _commentCache;
+
+        public CommentService()
         {
-            settings.WithMicrosoftMemoryCacheHandle();
-        });
+            using (var client = new MyCouchServerClient(SERVER))
+            {
+                var d = client.Databases.PutAsync(DATABASE).Result;
+
+                if (!client.Databases.HeadAsync(DATABASE).Result.IsSuccess)
+                {
+                    throw new Exception($"Database '{DATABASE}' not found!");
+                }
+            }
+
+            using (var client = new MyCouchClient(SERVER, DATABASE))
+            {
+                if (!client.Documents.HeadAsync("_design/comments").Result.IsSuccess)
+                {
+                    // Usefull: http://easyonlineconverter.com/converters/dot-net-string-escape.html
+
+                    var doc = client.Documents.PostAsync("{  \"_id\": \"_design/comments\",  \"views\": {    \"children\": {      \"map\": \"function (doc) {\\n  if (doc.$doctype == 'comment') {\\n    emit([doc.parent, doc.created], doc.Id);\\n  }\\n}\"    },    \"all_roots\": {      \"map\": \"function (doc) {\\n  if (doc.$doctype == \\\"comment\\\" && doc.parent == null) {\\n    emit(null, doc.Id);\\n  }\\n}\"    }  },  \"language\": \"javascript\"}").Result;
+
+                    if (!doc.IsSuccess)
+                    {
+                        throw new Exception("Failed to setup default view document");
+                    }
+                }
+            }
+
+            _commentStore = new MyCouchStore(SERVER, DATABASE);
+            _commentCache = CacheFactory.Build<Comment>(settings =>
+            {
+                settings.WithMicrosoftMemoryCacheHandle();
+            });
+        }
 
         /// <summary>
         /// Returns a complete thread with the specified number of comments, default is all comments.
@@ -78,13 +113,6 @@ namespace SocketComment
             _commentCache.Put(comment.Id, comment);
             return comment;
         }
-
-        //function(doc)
-        //{
-        //    if (doc.$doctype == "comment" && doc.parent == null) {
-        //        emit(null, doc.Id);
-        //    }
-        //}
 
         /// <summary>
         /// Returns all comments that do not have a parent comment.
@@ -176,13 +204,6 @@ namespace SocketComment
 
             return success;
         }
-
-        //function(doc)
-        //{
-        //    if (doc.$doctype == 'comment') {
-        //        emit([doc.parent, doc.created], doc.Id);
-        //    }
-        //}
 
         private IEnumerable<Thread> GetChildComments(Comment rootComment, int maxComments, int count = 0)
         {
