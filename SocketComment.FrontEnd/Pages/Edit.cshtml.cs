@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -47,6 +48,7 @@ namespace SocketComment.FrontEnd.Pages
                 return NotFound();
             }
 
+            Comment.LastEdit = DateTime.Now;
             Comment.Id = comment.Id;
             Comment.Rev = comment.Rev;
             Comment.Created = comment.Created;

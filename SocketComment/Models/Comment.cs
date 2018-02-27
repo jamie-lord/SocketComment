@@ -21,5 +21,7 @@ namespace SocketComment.Models
         public string Parent { get; set; }
 
         public bool? Deleted { get; set; }
+
+        public DateTime? LastEdit { get; set; }
     }
 }

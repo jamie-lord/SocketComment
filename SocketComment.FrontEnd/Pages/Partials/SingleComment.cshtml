@@ -27,6 +27,10 @@
                     @_comment.Author
                 }
             </strong> @Html.DisplayFor(c => _comment.Created)
+            @if (_comment.LastEdit != null)
+            {
+                @Html.Raw($"last edited {_comment.LastEdit}");
+            }
         </h6>
         <div class="comment-body">
             <div style="word-wrap: break-word; margin-bottom: 0em;">

@@ -184,6 +184,7 @@ namespace SocketComment
             comment.Author = null;
             comment.Message = null;
             comment.Deleted = true;
+            comment.LastEdit = null;
 
             comment = await StoreComment(comment);
             return comment.Id;
