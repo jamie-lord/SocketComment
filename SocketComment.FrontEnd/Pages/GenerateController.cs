@@ -15,7 +15,7 @@ namespace SocketComment.FrontEnd.Pages
 
         private CommentService _commentService;
 
-        [HttpGet("HackerNews/{id}", Name = "HackerNews")]
+        [HttpPost("HackerNews", Name = "HackerNews")]
         public IActionResult HackerNews(int id)
         {
             var url = "https://hn.algolia.com/api/v1/items/" + id;
@@ -72,11 +72,20 @@ namespace SocketComment.FrontEnd.Pages
                 {
                     comment.Message = $"Hacker News item type: {type}\n{title}";
                 }
+
+                if (comment.Message == null)
+                {
+                    comment.Deleted = true;
+                }
+
                 comment = commentService.StoreComment(comment).Result;
 
-                foreach (var child in children)
+                if (children != null)
                 {
-                    child.SaveChildren(commentService, comment.Id);
+                    foreach (var child in children)
+                    {
+                        child.SaveChildren(commentService, comment.Id);
+                    }
                 }
 
                 return comment.Id;

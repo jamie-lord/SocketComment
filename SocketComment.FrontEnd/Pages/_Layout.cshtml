@@ -17,8 +17,19 @@
 
         <div class="collapse navbar-collapse" id="collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" asp-page="/CreateComment">Create comment</a></li>
-                <li class="nav-item"><a class="nav-link" asp-page="/TestData">Generate thread</a></li>
+                <li class="nav-item"><a class="nav-link" asp-page="/CreateComment">New comment</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarGenerateMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Generate
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarGenerateMenuLink">
+                        <a class="dropdown-item" asp-page="/TestData">Random thread</a>
+                        <form class="dropdown-item form-inline" method="post" action="HackerNews">
+                            <input class="form-control mr-sm-2" type="text" name="id" placeholder="Hacker News item ID" aria-label="HackerNews">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Fetch</button>
+                        </form>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
