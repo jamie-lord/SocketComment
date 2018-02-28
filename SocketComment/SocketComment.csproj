@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DesignDocuments\Comments.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DesignDocuments\Comments.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CacheManager.Microsoft.Extensions.Caching.Memory" Version="1.1.2" />
     <PackageReference Include="MyCouch" Version="5.0.3" />
   </ItemGroup>

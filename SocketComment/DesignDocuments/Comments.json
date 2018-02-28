@@ -1,0 +1,12 @@
+﻿{
+  "_id": "_design/comments",
+  "views": {
+    "children": {
+      "map": "function (doc) {\n  if (doc.$doctype == 'comment') {\n    emit([doc.parent, doc.created], doc.Id);\n  }\n}"
+    },
+    "all_roots": {
+      "map": "function (doc) {\n  if (doc.$doctype == \"comment\" && doc.parent == null) {\n    emit(null, doc.Id);\n  }\n}"
+    }
+  },
+  "language": "javascript"
+}

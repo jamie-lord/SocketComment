@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using CacheManager.Core;
 using MyCouch;
@@ -33,13 +35,24 @@ namespace SocketComment
             {
                 if (!client.Documents.HeadAsync("_design/comments").Result.IsSuccess)
                 {
-                    // Usefull: http://easyonlineconverter.com/converters/dot-net-string-escape.html
-
-                    var doc = client.Documents.PostAsync("{  \"_id\": \"_design/comments\",  \"views\": {    \"children\": {      \"map\": \"function (doc) {\\n  if (doc.$doctype == 'comment') {\\n    emit([doc.parent, doc.created], doc.Id);\\n  }\\n}\"    },    \"all_roots\": {      \"map\": \"function (doc) {\\n  if (doc.$doctype == \\\"comment\\\" && doc.parent == null) {\\n    emit(null, doc.Id);\\n  }\\n}\"    }  },  \"language\": \"javascript\"}").Result;
-
-                    if (!doc.IsSuccess)
+                    var assembly = Assembly.GetExecutingAssembly();
+                    var docName = "SocketComment.DesignDocuments.Comments.json";
+                    using (Stream stream = assembly.GetManifestResourceStream(docName))
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        throw new Exception("Failed to setup default view document");
+                        string docString = reader.ReadToEnd();
+
+                        if (string.IsNullOrWhiteSpace(docString))
+                        {
+                            throw new Exception("Failed to load document json file");
+                        }
+
+                        var doc = client.Documents.PostAsync(docString).Result;
+
+                        if (!doc.IsSuccess)
+                        {
+                            throw new Exception("Failed to setup default view document");
+                        }
                     }
                 }
             }
