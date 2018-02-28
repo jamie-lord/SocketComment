@@ -38,7 +38,7 @@
                 {
                     @Html.Raw("[Deleted]");
                 }
-                else
+                else if (!string.IsNullOrWhiteSpace(_comment.Message))
                 {
                     @Html.Raw(Markdown.ToHtml(_comment.Message));
                 }
