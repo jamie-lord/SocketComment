@@ -165,7 +165,7 @@ namespace SocketComment.FrontEnd.Controllers
             public string type { get; set; }
             public string author { get; set; }
             public string title { get; set; }
-            public object url { get; set; }
+            public string url { get; set; }
             public string text { get; set; }
             public object points { get; set; }
             public int? parent_id { get; set; }
@@ -175,7 +175,7 @@ namespace SocketComment.FrontEnd.Controllers
 
             public string SaveChildren(CommentService commentService, string parentId)
             {
-                var comment = new Models.Comment
+                var comment = new Comment
                 {
                     Author = author,
                     Created = created_at,
@@ -187,7 +187,7 @@ namespace SocketComment.FrontEnd.Controllers
                 }
                 else
                 {
-                    comment.Message = $"Hacker News item type: {type}\n{title}";
+                    comment.Message = $"<h1><small>{points}</small> {title}</h1><p>{url}</p>";
                 }
 
                 if (comment.Message == null)
