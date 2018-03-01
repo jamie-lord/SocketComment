@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SocketComment.Models;
 
 namespace SocketComment.FrontEnd.Pages
 {
@@ -15,7 +16,7 @@ namespace SocketComment.FrontEnd.Pages
         private CommentService _commentService;
 
         [BindProperty]
-        public Models.Comment Comment { get; set; }
+        public Comment Comment { get; set; }
 
         public async Task<IActionResult> OnGet(string id)
         {

@@ -46,20 +46,20 @@
             <div class="comment-actions">
                 @if (_comment.Deleted == true && _comment.Parent == null)
                 {
-                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
+                    <a asp-page="./thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
                 }
                 else if (_comment.Deleted == null || _comment.Deleted == false)
                 {
-                    <a asp-page="./CreateComment" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
-                    <a asp-page="./Edit" asp-route-id="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="edit-2" width="12" height="12"></i> Edit</a>
-                    <a asp-page="./Thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
+                    <a asp-page="./create" asp-route-parentId="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="corner-up-left" width="12" height="12"></i> Reply</a>
+                    <a asp-page="./edit" asp-route-id="@_comment.Id" class="btn btn-link btn-sm" role="button" aria-pressed="true"><i data-feather="edit-2" width="12" height="12"></i> Edit</a>
+                    <a asp-page="./thread" asp-route-id="@_comment.Id" class="btn btn-link btn-sm"><i data-feather="link" width="12" height="12"></i> Permalink</a>
                     @if (!string.IsNullOrWhiteSpace(_parentId))
                     {
-                        <a asp-page="./Thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
+                        <a asp-page="./thread" asp-route-id="@_parentId" class="btn btn-link btn-sm">Parent</a>
                     }
-                    <a asp-controller="Comment" asp-action="DeleteComment" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete comment</a>
+                    <a asp-controller="Comment" asp-action="Delete" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete comment</a>
                 }
-                <a asp-controller="Comment" asp-action="DeleteThread" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete thread</a>
+                <a asp-controller="Thread" asp-action="Delete" asp-route-id="@_comment.Id" asp- class="btn btn-link btn-sm" role="button" aria-pressed="true">Delete thread</a>
             </div>
         </div>
     </div>

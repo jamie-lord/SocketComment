@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SocketComment.Models;
 using System;
 using System.Threading.Tasks;
 
 namespace SocketComment.FrontEnd.Pages
 {
-    public class CreateCommentModel : PageModel
+    [Route("create")]
+    public class CreateModel : PageModel
     {
-        public CreateCommentModel(CommentService commentService)
+        public CreateModel(CommentService commentService)
         {
             _commentService = commentService;
         }
@@ -15,7 +17,7 @@ namespace SocketComment.FrontEnd.Pages
         private CommentService _commentService;
 
         [BindProperty]
-        public Models.Comment Comment { get; set; }
+        public Comment Comment { get; set; }
 
         public IActionResult OnGet(string parentId)
         {

@@ -10,21 +10,21 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a asp-page="/Index" class="navbar-brand">SocketComment</a>
+        <a asp-page="/index" class="navbar-brand">SocketComment</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapse" aria-controls="collapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" asp-page="/CreateComment">New comment</a></li>
+                <li class="nav-item"><a class="nav-link" asp-page="/create">New comment</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarGenerateMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Generate
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarGenerateMenuLink">
-                        <a class="dropdown-item" asp-page="/TestData">Random thread</a>
-                        <form class="dropdown-item form-inline" method="post" action="HackerNews">
+                        <a class="dropdown-item" href="/generate/random">Random thread</a>
+                        <form class="dropdown-item form-inline" method="post" action="/generate/hackernews">
                             <input class="form-control mr-sm-2" type="text" name="id" placeholder="Hacker News item ID" aria-label="HackerNews">
                             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Fetch</button>
                         </form>

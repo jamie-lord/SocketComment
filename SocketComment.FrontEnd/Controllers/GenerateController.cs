@@ -1,23 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using SocketComment.Models;
-using Bogus;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Net;
+using Bogus;
 using Bogus.DataSets;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using SocketComment.Models;
 
-namespace SocketComment.FrontEnd.Pages
+namespace SocketComment.FrontEnd.Controllers
 {
-    public class TestDataModel : PageModel
+    [Route("generate")]
+    public class GenerateController : Controller
     {
-        public TestDataModel(CommentService commentService)
+        public GenerateController(CommentService commentService)
         {
             _commentService = commentService;
         }
 
         private CommentService _commentService;
 
-        public IActionResult OnGet(int count = 100)
+        [HttpPost("hackernews")]
+        public IActionResult HackerNews(int id)
+        {
+            var url = "https://hn.algolia.com/api/v1/items/" + id;
+
+            var webClient = new WebClient();
+            var result = webClient.DownloadString(new Uri(url));
+
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                return NotFound();
+            }
+
+            var comment = JsonConvert.DeserializeObject<HackerNewsItem>(result);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            var rootId = comment.SaveChildren(_commentService, null);
+
+            return Redirect("/thread/" + rootId);
+        }
+
+        [HttpGet("random")]
+        public IActionResult Random(int count = 100)
         {
             _count = count;
             var thread = RandomThread(null, 0);
@@ -39,7 +67,7 @@ namespace SocketComment.FrontEnd.Pages
 
         private Random _random = new Random();
 
-        private Thread RandomThread(Models.Comment parent, int depth)
+        private Thread RandomThread(Comment parent, int depth)
         {
             if (_count <= 0 || depth > MAX_CHILD_COMMENT_DEPTH)
             {
@@ -72,7 +100,7 @@ namespace SocketComment.FrontEnd.Pages
             return thread;
         }
 
-        private Models.Comment RandomComment(Models.Comment parent)
+        private Comment RandomComment(Comment parent)
         {
             if (_count <= 0)
             {
@@ -98,7 +126,7 @@ namespace SocketComment.FrontEnd.Pages
                     break;
             }
 
-            var comment = new Models.Comment
+            var comment = new Comment
             {
                 Author = faker.Name.FullName(Name.Gender.Female),
                 Message = faker.Lorem.Sentences(_random.Next(1, 11), " "),
@@ -127,6 +155,58 @@ namespace SocketComment.FrontEnd.Pages
             var partTimeSpanTicks = _random.NextDouble() * totalTimeSpanTicks;
             var partTimeSpan = TimeSpan.FromTicks(Convert.ToInt64(partTimeSpanTicks));
             return minDate + partTimeSpan;
+        }
+
+        private class HackerNewsItem
+        {
+            public int id { get; set; }
+            public DateTime created_at { get; set; }
+            public int created_at_i { get; set; }
+            public string type { get; set; }
+            public string author { get; set; }
+            public string title { get; set; }
+            public object url { get; set; }
+            public string text { get; set; }
+            public object points { get; set; }
+            public int? parent_id { get; set; }
+            public int? story_id { get; set; }
+            public List<HackerNewsItem> children { get; set; }
+            public List<object> options { get; set; }
+
+            public string SaveChildren(CommentService commentService, string parentId)
+            {
+                var comment = new Models.Comment
+                {
+                    Author = author,
+                    Created = created_at,
+                    Parent = parentId
+                };
+                if (type == "comment")
+                {
+                    comment.Message = text;
+                }
+                else
+                {
+                    comment.Message = $"Hacker News item type: {type}\n{title}";
+                }
+
+                if (comment.Message == null)
+                {
+                    comment.Deleted = true;
+                }
+
+                comment = commentService.StoreComment(comment).Result;
+
+                if (children != null)
+                {
+                    foreach (var child in children)
+                    {
+                        child.SaveChildren(commentService, comment.Id);
+                    }
+                }
+
+                return comment.Id;
+            }
         }
     }
 }
